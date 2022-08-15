@@ -1,0 +1,1 @@
+PVector gravity = new PVector(0.1,0.2);
