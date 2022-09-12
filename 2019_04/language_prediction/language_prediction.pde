@@ -1,6 +1,7 @@
-boolean loadSavedAxons = false;
+boolean loadSavedAxons = true;
+boolean testNN = false;
   
-int trainingCycles = 1000000;
+int trainingCycles = 10000000;
 int max_word_length = 15;
   
 int index = 2;
@@ -193,6 +194,18 @@ void draw(){
     println("Axons saved...");
     println("");
   }
+  //Testing
+  if(testNN){
+    println("Testing...");
+    int count = 0;
+    count += testing(english, 0);
+    count += testing(chinese, 1);
+    count += testing(french, 2);
+    count += testing(japanese, 3);
+    int wordNum = english.length+chinese.length+french.length+japanese.length;
+    float percentage = count/(float)wordNum*100;
+    println(percentage + "% with " + wordNum + " words\n");
+  }
   //testing
   for(int k = 0;k < test.length;k++){
     String word = test[k].toLowerCase();
@@ -247,4 +260,25 @@ void draw(){
     }
   }
   noLoop();
+}
+
+int testing(String[] words, int index){
+  int count = 0;
+  for(int k = 0;k < words.length;k++){
+    if(words[k].length() > 15) continue;
+    float[] input = new float[max_word_length*26];
+    for(int i = 0;i < words[k].length();i++){
+      for(int j = 0;j < letters.length;j++){
+        if(words[k].charAt(i) == letters[j].charAt(0)){
+          input[i*letters.length+j] = 1;
+        }
+      }
+    }
+    float[] output = n.feedforward(input);
+    int maxAt = 0;
+    for (int i = 0; i < output.length; i++)
+        maxAt = output[i] > output[maxAt] ? i : maxAt;
+    if(maxAt == index) count++;
+  }
+  return count;
 }
